@@ -76,7 +76,7 @@ python3 equation_generator.py
 Run abductive learning code
 
 ```
-sd src/
+cd src/
 python3 main.py
 ```
 
