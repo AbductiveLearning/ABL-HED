@@ -33,7 +33,7 @@ pip3 intall keras
 **Set environment variables(Should change file path according to your situation)**
 
 ```Shell
-# cd to Abductive-Learning
+# cd to ABL-HED
 git submodule update --init --recursive
 
 export ABL_HOME=$PWD
@@ -66,7 +66,7 @@ cp -r build/lib/zoopt ../
 
 ## Demo for arithmetic addition learning
 
-Change directory to Abductive-Learning, and run equaiton generator to get the training data
+Change directory to `ABL-HED`, and run equaiton generator to get the training data
 
 ```
 cd src/
