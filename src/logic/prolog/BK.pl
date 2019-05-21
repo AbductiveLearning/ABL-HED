@@ -16,7 +16,7 @@ digits([D | T]) --> [D], !, digits(T), { digit(D) }.
 digits(X):-
     phrase(digits(X), X).
 % More integrity constraints 1:
-% This two clauses forbids the first digit to be 0.
+% This two clauses forbid the first digit to be 0.
 % You may uncomment them to prune the search space
 % length(X, L),
 % (L > 1 -> X \= [0 | _]; true).
@@ -27,7 +27,7 @@ eq_arg([D | T]) --> [D], !, eq_arg(T), { \+ D == '+', \+ D == '=' }.
 equation(eq(X, Y, Z)) -->
     eq_arg(X), [+], eq_arg(Y), [=], eq_arg(Z).
 % More integrity constraints 2:
-% This clauses restricts the length of arguments to be sane,
+% This clause restricts the length of arguments to be sane,
 % You may uncomment them to prune the search space
 % { length(X, LX), length(Y, LY), length(Z, LZ),
 %   LZ =< max(LX, LY) + 1, LZ >= max(LX, LY) }.
