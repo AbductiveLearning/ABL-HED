@@ -14,20 +14,23 @@ digit(0).
 digits([D]) --> [D], { digit(D) }. % empty list [] is not a digit
 digits([D | T]) --> [D], !, digits(T), { digit(D) }.
 digits(X):-
-    phrase(digits(X), X),
-    % This two clauses are only used when you want to prune the search space by
-    % forbiding the first digit to be 0.
-    length(X, L),
-    (L > 1 -> X \= [0 | _]; true).
+    phrase(digits(X), X).
+% More integrity constraints 1:
+% This two clauses forbids the first digit to be 0.
+% You may uncomment them to prune the search space
+% length(X, L),
+% (L > 1 -> X \= [0 | _]; true).
 
 % Equation definition
 eq_arg([D]) --> [D], { \+ D == '+', \+ D == '=' }.
 eq_arg([D | T]) --> [D], !, eq_arg(T), { \+ D == '+', \+ D == '=' }.
 equation(eq(X, Y, Z)) -->
-    eq_arg(X), [+], eq_arg(Y), [=], eq_arg(Z),
-    % rules for argument length
-    { length(X, LX), length(Y, LY), length(Z, LZ),
-      LZ =< max(LX, LY) + 1, LZ >= max(LX, LY) }.
+    eq_arg(X), [+], eq_arg(Y), [=], eq_arg(Z).
+% More integrity constraints 2:
+% This clauses restricts the length of arguments to be sane,
+% You may uncomment them to prune the search space
+% { length(X, LX), length(Y, LY), length(Z, LZ),
+%   LZ =< max(LX, LY) + 1, LZ >= max(LX, LY) }.
 parse_eq(List_of_Terms, Eq) :-
     phrase(equation(Eq), List_of_Terms).
 
