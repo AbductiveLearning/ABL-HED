@@ -1,7 +1,9 @@
-# Abductive-Learning
+# Abductive Learning for Handwritten Equation Decipherment
 
-This is an anonymous repository for holding the code of _Bridging Machine
-Learning and Logical Reasoning by Abductive Learning_ submitted to NeurIPS 2019.
+This is an anonymous repository for holding the sample code of the abductive
+learning framework for handwritten equation decipherment experiments in
+_Bridging Machine Learning and Logical Reasoning by Abductive Learning_
+submitted to NeurIPS 2019.
 
 ## Environment dependency
 
