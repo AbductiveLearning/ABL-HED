@@ -1,0 +1,3 @@
+[submodule "src/logic/lib/ZOOpt"]
+	path = src/logic/lib/ZOOpt
+	url = https://github.com/eyounx/ZOOpt.git
