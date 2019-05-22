@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import random
-random_seed = 5  #random.randint(0, 10000)
+random_seed = random.randint(0, 10000)
 print("Selected random seed is : ", random_seed)
 np.random.seed(random_seed)
 random.seed(random_seed)
@@ -98,7 +98,7 @@ def net_model_test(src_path, labels, src_data_name, shape=(28, 28, 1)):
 	print("Test data size:", len(X_test))
 
 	model = get_nlm_net(len(labels), shape)
-	#Add decay
+	# Add decay
 	opt_rms = keras.optimizers.rmsprop(lr=0.001, decay=1e-6)
 	model.compile(optimizer=opt_rms,
 				  loss='categorical_crossentropy',
@@ -131,7 +131,7 @@ def net_model_test(src_path, labels, src_data_name, shape=(28, 28, 1)):
 	print('Test accuracy: ', accuracy)
 
 
-def net_model_pretrain(src_path, labels, src_data_name, shape=(28, 28, 1)):
+def net_model_pretrain(src_path, labels, src_data_name, shape=(28, 28, 1), pretrain_epochs=10):
 	print("\n** Now use autoencoder to pretrain the model **")
 
 	file_name = '%s_pretrain_weights.hdf5' % src_data_name
@@ -156,7 +156,7 @@ def net_model_pretrain(src_path, labels, src_data_name, shape=(28, 28, 1)):
 				  metrics=['accuracy'])
 
 	print('Pretraining...')
-	model.fit(X, Y, epochs=10, batch_size=64)
+	model.fit(X, Y, epochs=pretrain_epochs, batch_size=64)
 	model.save_weights(file_name)
 	print("Model saved to ", file_name)
 
@@ -230,9 +230,7 @@ def get_abduced_result(exs, maps, no_change):
 			# Use zoopt to optimize
 			sol = opt_var_ids_sets_constraint(exs, m, c)
 			# Get the result
-			consist_res = consistent_score_sets(exs,
-												[int(i) for i in sol.get_x()],
-												m)
+			consist_res = consistent_score_sets(exs, [int(i) for i in sol.get_x()], m)
 		if consist_res[0] > consist_res_max[0]:
 			consist_res_max = consist_res
 
@@ -331,8 +329,7 @@ def get_mlp_vector(equation, model, rules, abduced_map, shape=(28, 28, 1)):
 	h = shape[0]
 	w = shape[1]
 	d = shape[2]
-	model_output = np.argmax(model.predict(equation.reshape(-1, h, w, d)),
-							 axis=1)
+	model_output = np.argmax(model.predict(equation.reshape(-1, h, w, d)), axis=1)
 	model_labels = []
 	for out in model_output:
 		model_labels.append(abduced_map[out])
@@ -358,13 +355,11 @@ def get_mlp_data(equations_true,
 	mlp_labels = []
 	for equation in equations_true:
 		mlp_vectors.append(
-			get_mlp_vector(equation, base_model, out_rules, abduced_map,
-						   shape))
+			get_mlp_vector(equation, base_model, out_rules, abduced_map, shape))
 		mlp_labels.append(1)
 	for equation in equations_false:
 		mlp_vectors.append(
-			get_mlp_vector(equation, base_model, out_rules, abduced_map,
-						   shape))
+			get_mlp_vector(equation, base_model, out_rules, abduced_map, shape))
 		mlp_labels.append(0)
 	mlp_vectors = np.array(mlp_vectors)
 	mlp_labels = np.array(mlp_labels)
@@ -390,13 +385,11 @@ def get_file_data(src_data_file, prop_train, prop_val):
 		equations_false_by_len, prop_train, prop_val)
 
 	for equations_true in equations_true_by_len:
-		print(
-			"There are %d true training and validation equations of length %d"
-			% (len(equations_true), len(equations_true[0])))
+		print("There are %d true training and validation equations of length %d"
+			  % (len(equations_true), len(equations_true[0])))
 	for equations_false in equations_false_by_len:
-		print(
-			"There are %d false training and validation equations of length %d"
-			% (len(equations_false), len(equations_false[0])))
+		print("There are %d false training and validation equations of length %d"
+			  % (len(equations_false), len(equations_false[0])))
 	for equations_true in equations_true_by_len_test:
 		print("There are %d true testing equations of length %d" %
 			  (len(equations_true), len(equations_true[0])))
@@ -569,23 +562,22 @@ def validation(base_model, equations_true, equations_false, equations_true_val,
 
 def get_all_mlp_data(equations_true_by_len_train, equations_false_by_len_train,
 					 base_model, out_rules, abduced_map, shape,
-					 EQUATION_LEN_CNT):
+					 EQUATION_LEAST_LEN,
+					 EQUATION_MAX_LEN):
 	mlp_train_vectors = []
 	mlp_train_labels = []
 	#for each length of test equations
-	for equations_type in range(EQUATION_LEN_CNT):
+	for equations_type in range(EQUATION_LEAST_LEN - 5, EQUATION_MAX_LEN - 4):
 		mlp_train_len_vectors, mlp_train_len_labels = get_mlp_data(
 			equations_true_by_len_train[equations_type],
 			equations_false_by_len_train[equations_type], base_model,
 			out_rules, abduced_map, shape)
-		if equations_type == 0:
+		if equations_type == EQUATION_LEAST_LEN - 5:
 			mlp_train_vectors = mlp_train_len_vectors.copy()
 			mlp_train_labels = mlp_train_len_labels.copy()
 		else:
-			mlp_train_vectors = np.concatenate(
-				(mlp_train_vectors, mlp_train_len_vectors), axis=0)
-			mlp_train_labels = np.concatenate(
-				(mlp_train_labels, mlp_train_len_labels), axis=0)
+			mlp_train_vectors = np.concatenate((mlp_train_vectors, mlp_train_len_vectors), axis=0)
+			mlp_train_labels = np.concatenate((mlp_train_labels, mlp_train_len_labels), axis=0)
 
 	index = np.array(list(range(len(mlp_train_labels))))
 	np.random.shuffle(index)
@@ -617,8 +609,7 @@ def test_nn_model(model, src_path, labels, input_shape):
 	print('Neural network perception accuracy: ', best_accuracy)
 
 
-def nlm_main_func(labels, src_data_name, src_data_file, pl_file_path, shape,
-				  args):
+def nlm_main_func(labels, src_data_name, src_data_file, pl_file_path, shape, args):
 	LL_init(pl_file_path)
 
 	h = shape[0]
@@ -629,8 +620,9 @@ def nlm_main_func(labels, src_data_name, src_data_file, pl_file_path, shape,
 	#LOGIC_OUTPUT_DIM = 50 #The mlp vector has 50 dimensions
 	LOGIC_OUTPUT_DIM = args.LOGIC_OUTPUT_DIM
 	#EQUATION_MAX_LEN = 8 #Only learn the equations of length 5-8
+	EQUATION_LEAST_LEN = args.EQUATION_LEAST_LEN
 	EQUATION_MAX_LEN = args.EQUATION_MAX_LEN
-	EQUATION_LEN_CNT = EQUATION_MAX_LEN - 4  #equations index is 0-4
+	EQUATION_LEN_CNT = EQUATION_MAX_LEN - EQUATION_LEAST_LEN + 1  #equations index is 0-4
 	#SELECT_NUM = 10 #Select 10 equations to abduce rules
 	SELECT_NUM = args.SELECT_NUM
 	#
@@ -670,16 +662,14 @@ def nlm_main_func(labels, src_data_name, src_data_file, pl_file_path, shape,
 	for i in range(len(base_model.layers)):
 		base_model.layers[i].set_weights(t_model.layers[i].get_weights())
 	opt_rms = keras.optimizers.rmsprop(lr=0.001, decay=1e-6)
-	base_model.compile(optimizer=opt_rms,
-					   loss='categorical_crossentropy',
-					   metrics=['accuracy'])
+	base_model.compile(optimizer=opt_rms, loss='categorical_crossentropy', metrics=['accuracy'])
 
 	# Get file data
 	equations_true_by_len_train,equations_true_by_len_validation,equations_false_by_len_train,\
 	equations_false_by_len_validation,equations_true_by_len_test,equations_false_by_len_test = get_file_data(src_data_file, PROP_TRAIN, PROP_VALIDATION)
 
 	# Start training / for each length of equations
-	for equations_type in range(EQUATION_LEN_CNT - 1):
+	for equations_type in range(EQUATION_LEAST_LEN - 5, EQUATION_MAX_LEN - 5):
 		print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 		print("LENGTH: ", 5 + equations_type, " to ", 5 + equations_type + 1)
 		print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
@@ -688,12 +678,9 @@ def nlm_main_func(labels, src_data_name, src_data_file, pl_file_path, shape,
 		equations_true_val = equations_true_by_len_validation[equations_type]
 		equations_false_val = equations_false_by_len_validation[equations_type]
 		equations_true.extend(equations_true_by_len_train[equations_type + 1])
-		equations_false.extend(equations_false_by_len_train[equations_type +
-															1])
-		equations_true_val.extend(
-			equations_true_by_len_validation[equations_type + 1])
-		equations_false_val.extend(
-			equations_false_by_len_validation[equations_type + 1])
+		equations_false.extend(equations_false_by_len_train[equations_type + 1])
+		equations_true_val.extend(equations_true_by_len_validation[equations_type + 1])
+		equations_false_val.extend(equations_false_by_len_validation[equations_type + 1])
 		#the times that the condition of beginning to train MLP is continuously satisfied
 		condition_cnt = 0
 		while True:
@@ -730,7 +717,7 @@ def nlm_main_func(labels, src_data_name, src_data_file, pl_file_path, shape,
 					break
 				else:
 					#Restart current course: reload model
-					if equations_type == 0:
+					if equations_type == EQUATION_LEAST_LEN - 5:
 						for i in range(len(base_model.layers)):
 							base_model.layers[i].set_weights(
 								t_model.layers[i].get_weights())
@@ -746,11 +733,9 @@ def nlm_main_func(labels, src_data_name, src_data_file, pl_file_path, shape,
 	print("Now begin to train final mlp model")
 	select_equation_cnt = []
 	if LOGIC_OUTPUT_DIM % EQUATION_LEN_CNT == 0:
-		select_equation_cnt = [LOGIC_OUTPUT_DIM // EQUATION_LEN_CNT
-							   ] * EQUATION_LEN_CNT
+		select_equation_cnt = [LOGIC_OUTPUT_DIM // EQUATION_LEN_CNT ] * EQUATION_LEN_CNT
 	else:
-		select_equation_cnt = [LOGIC_OUTPUT_DIM // EQUATION_LEN_CNT
-							   ] * EQUATION_LEN_CNT
+		select_equation_cnt = [LOGIC_OUTPUT_DIM // EQUATION_LEN_CNT ] * EQUATION_LEN_CNT
 		select_equation_cnt[-1] += LOGIC_OUTPUT_DIM % EQUATION_LEN_CNT
 	assert sum(select_equation_cnt) == LOGIC_OUTPUT_DIM
 
@@ -768,7 +753,7 @@ def nlm_main_func(labels, src_data_name, src_data_file, pl_file_path, shape,
 	#Get mlp training data
 	mlp_train_vectors, mlp_train_labels = get_all_mlp_data(
 		equations_true_by_len_train, equations_false_by_len_train, base_model,
-		out_rules, abduced_map, shape, EQUATION_LEN_CNT)
+		out_rules, abduced_map, shape, EQUATION_LEAST_LEN, EQUATION_MAX_LEN)
 	#Try three times to train and find the best mlp
 	for i in range(3):
 		#Train MLP
@@ -811,13 +796,23 @@ def arg_init():
 		default=50,
 		help='The last mlp feature vector dimensions, default is 50')
 
+	#EQUATION_LEAST_LEN = 5 #Only learn the equations of length 5-8
+	parser.add_argument(
+		'--ELL',
+		dest="EQUATION_LEAST_LEN",
+		metavar='EQUATION_LEAST_LEN',
+		type=int,
+		default=5,
+		help='Equation least (minimum) length for training, default is 5')
+
 	#EQUATION_MAX_LEN = 8 #Only learn the equations of length 5-8
-	parser.add_argument('--EML',
-						dest="EQUATION_MAX_LEN",
-						metavar='EQUATION_MAX_LEN',
-						type=int,
-						default=8,
-						help='Equation max length in training, default is 8')
+	parser.add_argument(
+		'--EML',
+		dest="EQUATION_MAX_LEN",
+		metavar='EQUATION_MAX_LEN',
+		type=int,
+		default=8,
+		help='Equation max length for training, default is 8')
 
 	#SELECT_NUM = 10 #Select 10 equations to abduce rules
 	parser.add_argument(
@@ -831,7 +826,6 @@ def arg_init():
 
 	# Proportion of train and validation = 3:1
 	#PROP_TRAIN = 3
-	#PROP_VALIDATION = 1
 	parser.add_argument(
 		'--PT',
 		dest="PROP_TRAIN",
@@ -840,6 +834,7 @@ def arg_init():
 		default=3,
 		help='Proportion of train and validation rate, default PROP_TRAIN is 3'
 	)
+	#PROP_VALIDATION = 1
 	parser.add_argument(
 		'--PV',
 		dest="PROP_VALIDATION",
@@ -918,11 +913,13 @@ def arg_init():
 						type=int,
 						default=1,
 						help='Img channel num')
+
+	parser.add_argument('--pretrain_epochs', type=int, default=10, help='Pretrain_epochs, default is 10')
 	#parser.add_argument('--pl_file_path', type=str, default="logic/prolog/learn_add.pl", help="Which prolog file will be used")
 	parser.add_argument(
 		'--src_data_file',
 		type=str,
-		default="mnist_equation_data_train_len_8_test_len_26_sys_2_.pk",
+		default="mnist_equation_data_train_len_26_test_len_26_sys_2_.pk",
 		help="This file is generated by equation_generator.py")
 
 	args = parser.parse_args()
@@ -930,29 +927,24 @@ def arg_init():
 
 
 if __name__ == "__main__":
+	# here the "labels" are just dir names for storing handwritten images of the 4 symbols
 	labels = ['0', '1', '10', '11']
 	args = arg_init()
-	#src_dir = "../dataset"
 	src_dir = args.src_dir
-	#src_data_name = "mnist_images" #cifar10_images
 	src_data_name = args.src_data_name
-	#input_shape = (28, 28, 1) #(32, 32, 3)
 	input_shape = (args.height, args.weight, args.channel)
 	pl_file_path = "logic/prolog/learn_add.pl"
 	#pl_file_path = args.pl_file_path
-	#src_data_file = 'mnist_equation_data_train_len_8_test_len_26_sys_2_.pk'
 	src_data_file = args.src_data_file
 	src_path = os.path.join(src_dir, src_data_name)
 
-	net_model_test(src_path=src_path,
-				   labels=labels,
-				   src_data_name=src_data_name,
-				   shape=input_shape)
+	# Unsupervised pre-train for the CNN to help it distinguish between different symbols
 	net_model_pretrain(src_path=src_path,
 					   labels=labels,
 					   src_data_name=src_data_name,
-					   shape=input_shape)
-
+					   shape=input_shape,
+					   pretrain_epochs=args.pretrain_epochs)
+	# Abductive Learing main function
 	model = nlm_main_func(labels=labels,
 						  src_data_name=src_data_name,
 						  src_data_file=src_data_file,

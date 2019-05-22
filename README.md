@@ -84,3 +84,11 @@ or
 ```
 python3 main.py --help
 ```
+## Remark
+
+1. It is possible that the logic abduction finds a __trivial__ but __consistent__
+   solution: all equations are `0000+0000=0000` with the only rule
+   `my_op([0],[0],[0])`. If it happens, don't hesitate and __kill__ the program, just
+   re-run it and give it another chance :)
+2. The mapping from CNN to symbolic primitive symbols are learned, so it is fine
+   if ABL learns `0+0=01` and `1+1=1`, it just swaps the semantics of `0` and `1`.

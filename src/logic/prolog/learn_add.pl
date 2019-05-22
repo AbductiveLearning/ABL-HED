@@ -28,9 +28,9 @@ abduce([E|Exs], Delta_C0, Delta_C1) :-
 %% Abduce pseudo-labels only
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 abduce_consistent_insts(Exs):-
-    abduce(Exs, _),
-    % abduce_consistent_exs_concurrent(Exs),
-    !.
+    abduce(Exs, _), !.
+% (Experimental) Uncomment to use parallel abduction
+% abduce_consistent_exs_concurrent(Exs), !.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Abduce Delta_C given pseudo-labels
@@ -38,9 +38,9 @@ abduce_consistent_insts(Exs):-
 consistent_inst_feature(Exs, Delta_C):-
     abduce(Exs, Delta_C), !.
 
-%%%%%%%%%%%%%%%%%%%%%%
-%% Parallel abduction
-%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% (Experimental) Parallel abduction
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 abduce_consistent_exs_concurrent(Exs) :-
     % Split the current data batch into grounding examples and variable examples (which need to be revised)
     split_exs(Exs, Ground_Exs, Var_Exs),

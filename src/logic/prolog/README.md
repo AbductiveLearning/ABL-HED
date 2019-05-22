@@ -11,11 +11,6 @@ This is a logic abduction module for python.
 cd src/prolog
 python3 setup.py install
 ```
-3. Test
-```shell
-python3 test.py
-```
-
 ## Usage ##
 
 ```python
@@ -23,9 +18,6 @@ python3 test.py
 import LogicLayer as LL
 LL.init()
 LL.consult('PATH_TO_KNOWLEDGE_BASE')
-
-# generating random logical feature
-f = LL.genRandFeature()
 ```
 
 More examples please refer to `test.py`

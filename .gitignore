@@ -1,5 +1,6 @@
 src/logic/prolog/build
 src/logic/lib/LogicLayer*
+build
 *.pk
 *.hdf5
 __pycache__
