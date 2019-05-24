@@ -85,7 +85,7 @@ or
 python3 main.py --help
 ```
 
-To test the RBA example, please specify the `src_data_name` and `src_data_name`
+To test the RBA example, please specify the `src_data_name` and `src_data_file`
 together, e.g.,
 
 ```shell
