@@ -51,13 +51,13 @@ export LD_LIBRARY_PATH=$ABL_HOME/src/logic/lib:/usr/local/cuda:$LD_LIBRARY_PATH
 
 **First change the `swipl_include_dir` and `swipl_lib_dir` in `setup.py` to your own SWI-Prolog path.**
 
-```SHell
+```Shell
 cd src/logic/prolog
 python3 setup.py install
 ```
 
 **Build ZOOpt**
-```SHell
+```Shell
 cd src/logic/lib/ZOOpt
 python3 setup.py build
 cp -r build/lib/zoopt ../
@@ -68,21 +68,28 @@ cp -r build/lib/zoopt ../
 
 Change directory to `ABL-HED`, and run equaiton generator to get the training data
 
-```
+```shell
 cd src/
 python3 equation_generator.py
 ```
 
 Run abductive learning code
 
-```
+```shell
 cd src/
 python3 main.py
 ```
 
 or
-```
+```shell
 python3 main.py --help
+```
+
+To test the RBA example, please specify the `src_data_name` and `src_data_name`
+together, e.g.,
+
+```shell
+python main.py --src_data_name random_images --src_data_file random_equation_data_train_len_26_test_len_26_sys_2_.pk
 ```
 ## Remark
 
