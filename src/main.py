@@ -165,7 +165,7 @@ def LL_init(pl_file_path):
     print("\n** Initializing prolog **")
     assert os.path.exists(pl_file_path), "%s is not exist" % pl_file_path
     # must initialise prolog engine first!
-    LL.init("-G10g -M6g")
+    LL.init("--quiet --nosignals --stack_limit=10G")
     # consult the background knowledge file
     LL.consult(pl_file_path)
     #test if stack changed

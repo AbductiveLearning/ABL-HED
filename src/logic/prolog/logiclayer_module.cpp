@@ -30,14 +30,14 @@ LogicLayer_initProlog(PyObject * self, PyObject *args) {
     int ac = 0;
     char **av = (char **)malloc(sizeof(char *) * (20));
     char av0[10] = "./";
-    char av1[10] = "-q";         // quiet
-    char av2[15] = "-nosignals"; // signal handling
+    // char av1[10] = "--q";         // quiet
+    // char av2[15] = "--nosignals"; // signal handling
     av[ac++] = av0;
-    av[ac++] = av1;
-    av[ac++] = av2;
+    // av[ac++] = av1;
+    // av[ac++] = av2;
 
     const char *split = " ";
-    char *p; 
+    char *p;
     p = strtok(stack, split);
     while (p != NULL) {
         av[ac++] = p;
@@ -83,7 +83,7 @@ LogicLayer_gc(PyObject * self, PyObject *args) {
             cerr << "Call garbage_collect/0 failed!" << endl;
     } else
         cerr << "No Prolog engine exists!" << endl;
-    
+
     PL_discard_foreign_frame(fid);
     Py_INCREF(Py_None);
     return Py_None;
@@ -102,7 +102,7 @@ LogicLayer_trimStacks(PyObject * self, PyObject *args) {
             cerr << "Call trim_stack/0 failed!" << endl;
     } else
         cerr << "No Prolog engine exists!" << endl;
-    
+
     PL_discard_foreign_frame(fid);
     Py_INCREF(Py_None);
     return Py_None;
@@ -159,7 +159,7 @@ LogicLayer_legitInst(PyObject * self, PyObject *args) {
     }
     fid_t fid = PL_open_foreign_frame();
     Py_PlTerm *ex = (Py_PlTerm *) ex_;
-    
+
     PlTermv av(1);
     map<string, PlTerm> *var_map = new map<string, PlTerm>();
     av[0] = Py2PlTerm(ex->term_py, var_map);
@@ -170,7 +170,7 @@ LogicLayer_legitInst(PyObject * self, PyObject *args) {
     int result = PL_next_solution(q) ? 1 : 0;
     PL_close_query(q);
     PL_reset_term_refs(av.a0);
-    
+
     PyObject *ans = PyBool_FromLong(result);
     PL_discard_foreign_frame(fid);
     Py_INCREF(ans);
@@ -200,7 +200,7 @@ LogicLayer_genRandFeature(PyObject * self, PyObject *args) {
     } else {
         PL_cut_query(q);
         //PL_discard_foreign_frame(fid);
-        
+
         Py_PlTerm *re;
         re = Py_PlTerm_fromPlTerm(av[0]);
 
@@ -223,7 +223,7 @@ LogicLayer_parseInstFeature(PyObject * self, PyObject *args) {
 
     PlTermv av(2);
     map<string, PlTerm> *var_map = new map<string, PlTerm>();
-    
+
     av[1] = PlTerm();
     if (Py_PlTerm_Check(ex_))
         av[0] = Py2PlTerm(((Py_PlTerm *) ex_)->term_py, var_map);
@@ -231,10 +231,10 @@ LogicLayer_parseInstFeature(PyObject * self, PyObject *args) {
         av[0] = Py2PlTerm(ex_, var_map);
 
     delete var_map;
-    
+
     predicate_t pred = PL_predicate("parse_feature", 2, "user");
     qid_t q = PL_open_query(NULL, PL_Q_NORMAL, pred, av.a0);
-   
+
     if (PL_next_solution(q)) {
         PL_cut_query(q);
         Py_PlTerm *re = Py_PlTerm_fromPlTerm(av[1]);
@@ -268,7 +268,7 @@ LogicLayer_evalInstFeature(PyObject * self, PyObject *args) {
     av[1] = Py2PlTerm(feat->term_py, var_map2);
     delete var_map1;
     delete var_map2;
-    
+
     predicate_t pred = PL_predicate("eval_inst_feature", 2, "user");
     qid_t q = PL_open_query(NULL, PL_Q_NORMAL, pred, av.a0);
     int result = PL_next_solution(q) ? 1 : 0;
@@ -334,7 +334,7 @@ LogicLayer_abduceInstFeature(PyObject * self, PyObject *args) {
     delete var_map1;
     delete var_map2;
     delete var_map3;
-    
+
     PyObject *re = PyList_New(0);
 
     predicate_t pred = PL_predicate("abduce_inst_feature", 3, "user");
@@ -367,7 +367,7 @@ LogicLayer_abduceConInsts(PyObject * self, PyObject *args) {
     map<string, PlTerm> *var_map = new map<string, PlTerm>();
     ex = Py2PlTerm(ex_, var_map);
     delete var_map;
-    
+
     predicate_t pred = PL_predicate("abduce_consistent_insts", 1, "user");
     qid_t q = PL_open_query(NULL, PL_Q_NORMAL, pred, ex.ref); // use c interface
 
@@ -383,7 +383,7 @@ LogicLayer_abduceConInsts(PyObject * self, PyObject *args) {
     }
     PL_reset_term_refs(ex.ref);
     PL_discard_foreign_frame(fid);
-    
+
     Py_INCREF(re);
     return re;
 }
@@ -405,7 +405,7 @@ LogicLayer_conInstsFeature(PyObject * self, PyObject *args) {
     delete var_map;
 
     //cout << (char *) av[0] << endl;
-    
+
     predicate_t pred = PL_predicate("consistent_inst_feature", 2, "user");
     qid_t q = PL_open_query(NULL, PL_Q_NORMAL, pred, av.a0); // use c interface
 
@@ -421,9 +421,9 @@ LogicLayer_conInstsFeature(PyObject * self, PyObject *args) {
     }
     PL_reset_term_refs(av.a0);
     PL_discard_foreign_frame(fid);
-    
+
     Py_INCREF(re);
-    return re;    
+    return re;
 }
 
 static PyObject *
@@ -453,7 +453,7 @@ LogicLayer_conDigitRules(PyObject * self, PyObject *args) {
 
 /********** Py_PlTerm Methods *********/
 // recursively analyse a prolog term from PyObject
-static PlTerm 
+static PlTerm
 Py2PlTerm(PyObject *atom, map<string, PlTerm> *var_map) {
     PlTerm re; // returned term
     if (PyList_Check(atom)) {
@@ -472,7 +472,7 @@ Py2PlTerm(PyObject *atom, map<string, PlTerm> *var_map) {
         // do compound analyse
         if (Py_PlTerm_Check(atom)) { // if is already a Py_PlTerm
             Py_INCREF(atom);
-            map<string, PlTerm> *var_map_t = new map<string, PlTerm>(); 
+            map<string, PlTerm> *var_map_t = new map<string, PlTerm>();
             re = Py2PlTerm(((Py_PlTerm *) atom)->term_py, var_map_t);
             delete var_map_t;
             //cout << "Org Py_PlTerm: " << (char *) *t << endl;
@@ -514,9 +514,9 @@ static int
 Py_PlTerm_init(Py_PlTerm *self, PyObject *args, PyObject *kwds) {
     PyObject *term = NULL;
     PyObject *tmp_term = NULL;
-    
+
     static char *kwlist[] = {(char *) "term", 0};
-    
+
     if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O:PlTerm", kwlist, &term))
         return -1;
     if (term) {
@@ -536,7 +536,7 @@ Py_PlTerm_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 
     if (self == NULL) {
         return NULL;
-    }        
+    }
     self->term_py = NULL;
     return (PyObject *) self;
 }
@@ -580,7 +580,7 @@ PlTerm2Py(PlTerm term) {
         re = PyList_New(0);
         if (re == NULL)
             return NULL;
-        
+
         break;
     case PL_LIST_PAIR:
     {
@@ -610,7 +610,7 @@ PlTerm2Py(PlTerm term) {
         }
         if (re == NULL)
             return NULL;
-        
+
         break;
     case PL_INTEGER:
         //cout << (char *) term << " is an int." << endl;
@@ -638,7 +638,7 @@ PlTerm2Py(PlTerm term) {
         re = PyUnicode_FromString((char *) term);
         if (re == NULL)
             return NULL;
-        
+
     }
 
     Py_INCREF(re);
