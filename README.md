@@ -1,9 +1,8 @@
 # Abductive Learning for Handwritten Equation Decipherment
 
-This is an anonymous repository for holding the sample code of the abductive
-learning framework for handwritten equation decipherment experiments in
-_Bridging Machine Learning and Logical Reasoning by Abductive Learning_
-submitted to NeurIPS 2019.
+This is the code repository of the abductive learning framework for handwritten
+equation decipherment experiments in _Bridging Machine Learning and Logical
+Reasoning by Abductive Learning_ in NeurIPS 2019.
 
 ## Environment dependency
 
@@ -27,7 +26,8 @@ submitted to NeurIPS 2019.
 #install numpy tensorflow keras
 pip3 install numpy
 pip3 install tensorflow
-pip3 intall keras
+pip3 install keras
+pip3 install zoopt
 ```
 
 **Set environment variables(Should change file path according to your situation)**
@@ -56,14 +56,6 @@ cd src/logic/prolog
 python3 setup.py install
 ```
 
-**Build ZOOpt**
-```Shell
-cd src/logic/lib/ZOOpt
-python3 setup.py build
-cp -r build/lib/zoopt ../
-```
-
-
 ## Demo for arithmetic addition learning
 
 Change directory to `ABL-HED`, and run equaiton generator to get the training data
@@ -91,11 +83,8 @@ together, e.g.,
 ```shell
 python main.py --src_data_name random_images --src_data_file random_equation_data_train_len_26_test_len_26_sys_2_.pk
 ```
-## Remark
+## Authors
 
-1. It is possible that the logic abduction finds a __trivial__ but __consistent__
-   solution: all equations are `0000+0000=0000` with the only rule
-   `my_op([0],[0],[0])`. If it happens, don't hesitate and __kill__ the program, just
-   re-run it and give it another chance :)
-2. The mapping from CNN to symbolic primitive symbols are learned, so it is fine
-   if ABL learns `0+0=01` and `1+1=1`, it just swaps the semantics of `0` and `1`.
+- [Wang-Zhou Dai](http://daiwz.net) (Imperial College London)
+- [Yu-Xuan Huang](http://www.lamda.nju.edu.cn/huangyx/) (Nanjing University)
+- [Le-Wen Cai](http://www.lamda.nju.edu.cn/cailw/) (Nanjing University)
