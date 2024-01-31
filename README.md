@@ -1,3 +1,7 @@
+🌟 **New!** [ABLkit](https://github.com/AbductiveLearning/ABLkit) released: A toolkit for Abductive Learning with high flexibility, user-friendly interface, and optimized performance. Welcome to try it out!🚀
+
+Update: This repository is NO longer actively developed. It has been (mostly) superseded by [ABLkit](https://github.com/AbductiveLearning/ABLkit). The code for ABL-HED with ABLkit is in this [link](https://github.com/AbductiveLearning/ABLkit/tree/main/examples/hed). For the latest advancements and updates, we encourage you to visit the new repository.
+
 # Abductive Learning for Handwritten Equation Decipherment
 
 This is the code repository of the abductive learning framework for handwritten
